@@ -1,36 +1,94 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pylab as plt
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
 
-url = "https://archive.ics.uci.edu/ml/machine-learning-databases/autos/imports-85.data"
 
-path = "data.csv"
+class ModelDevelopment:
+    def __init__(self, url: str = None, width: int = 12, height: int = 10):
+        self.df = self.get_data(url)
+        self.width = width
+        self.height = height
 
-headers = ["symboling", "normalized-losses", "make", "fuel-type", "aspiration", "num-of-door", "body-style",
-           "drive-wheels", "engine-location", "wheel-base", "length", "width", "height", "curb-weight",
-           "engine-type", "num-of-cylinders", "engine-size", "fuel-system", "bore", "stroke", "compression-ratio",
-           "horsepower", "peak-rpm", "city-mpg", "highway-mpg", "price"]
+    @staticmethod
+    def get_data(url: str = None):
+        if not url:
+            url = "https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/DA0101EN/automobileEDA.csv"
 
-df = pd.read_csv(path, names=headers)
+        df = pd.read_csv(url)
+        df.to_csv("data.csv")
+        return df
 
-''' Replace ? to NaN'''
-df.replace("?", np.nan, inplace=True)
-print(df.head(5))
-print(df.describe(include="all"))
+    def residiual_plot(self):
+        plt.figure(figsize=(self.width, self.height))
+        sns.residplot(self.df["highway-mpg"], self.df["price"])
+        plt.show()
+        plt.close()
 
-# drive_wheels_counts = df["drive-wheels"].value_counts()
-# print(drive_wheels_counts)
-# 
-# df.rename(columns={"drive-wheels": 'values_counts'}, inplace=True)
-# df.index.name = 'drive-wheels'
-# 
-# print(df.describe(include="all"))
+    def distribution_plot(self, data):
+        plt.figure(figsize=(self.width, self.height))
 
-y = df["engine-size"]
-x = df["price"]
+        ax1 = sns.distplot(
+            self.df["price"], hist=False, color="r", label="Actual Values"
+        )
+        sns.distplot(data, hist=False, color="b", label="Fitted Values", ax=ax1)
 
-plt.scatter(x, y)
-plt.title("Scattler plot of Engine Size vs Price")
-plt.xlabel("Engine Size")
-plt.xlabel("Price")
-plt.show()
+        plt.title("Actual vs Fitted Values for Price")
+        plt.xlabel("Price (in dollars)")
+        plt.ylabel("Proportion of Cars")
+        plt.show()
+        plt.close()
+
+    def polynomial_regression_plot(
+        self, model, independent_variable, dependent_variable, name
+    ):
+        x_new = np.linspace(15, 55, 100)
+        y_new = model(x_new)
+
+        plt.plot(independent_variable, dependent_variable, ".", x_new, y_new, "-")
+        plt.title("Polynomial Fit with Matplotlib for Price ~ Length")
+        ax = plt.gca()
+        ax.set_facecolor((0.898, 0.898, 0.898))
+        fig = plt.gcf()
+        plt.xlabel(name)
+        plt.ylabel("Price of Cars")
+
+        plt.show()
+        plt.close()
+
+    def single_linear_regression(self):
+        Z = self.df[["highway-mpg"]]
+        lm = LinearRegression()
+        lm.fit(Z, self.df["price"])
+        Yhat = lm.predict(Z)
+
+        self.distribution_plot(Yhat)
+
+    def multiple_linear_regression(self):
+        Z = self.df[["horsepower", "curb-weight", "engine-size", "highway-mpg"]]
+        lm = LinearRegression()
+        lm.fit(Z, self.df["price"])  # training model
+        Yhat = lm.predict(Z)
+
+        self.distribution_plot(Yhat)
+
+    def polynomial_regression(self):
+        x = self.df["highway-mpg"]
+        y = self.df["price"]
+
+        f = np.polyfit(x, y, 3)
+        p = np.poly1d(f)
+
+        self.polynomial_regression_plot(p, x, y, "highway-mpg")
+
+        print(f)
+
+
+if __name__ == "__main__":
+    model = ModelDevelopment()
+    # model.residiual_plot()
+    # model.single_linear_regression()
+    # model.multiple_linear_regression()
+
+    model.polynomial_regression()
