@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 
 class ModelDevelopment:
@@ -18,8 +20,10 @@ class ModelDevelopment:
 
         df = pd.read_csv(url)
         df.to_csv("data.csv")
+        print(df.corr())
         return df
 
+    @staticmethod
     def residiual_plot(self):
         plt.figure(figsize=(self.width, self.height))
         sns.residplot(self.df["highway-mpg"], self.df["price"])
@@ -40,9 +44,8 @@ class ModelDevelopment:
         plt.show()
         plt.close()
 
-    def polynomial_regression_plot(
-        self, model, independent_variable, dependent_variable, name
-    ):
+    @staticmethod
+    def polynomial_regression_plot(model, independent_variable, dependent_variable, name):
         x_new = np.linspace(15, 55, 100)
         y_new = model(x_new)
 
@@ -70,8 +73,9 @@ class ModelDevelopment:
         lm = LinearRegression()
         lm.fit(Z, self.df["price"])  # training model
         Yhat = lm.predict(Z)
-
         self.distribution_plot(Yhat)
+
+        print(Z.shape)
 
     def polynomial_regression(self):
         x = self.df["highway-mpg"]
@@ -84,11 +88,39 @@ class ModelDevelopment:
 
         print(f)
 
+    def polynomial_features(self):
+        Z = self.df[["horsepower", "curb-weight", "engine-size", "highway-mpg"]]
+
+        pr = PolynomialFeatures(degree=2)
+        Z_pr = pr.fit_transform(Z)
+
+        print("The original data is of {samples} samples and {features}"
+              .format(samples=Z.shape[0], features=Z.shape[1]))
+        print("After the transformation, there {samples} samples and {features} features"
+              .format(samples=Z_pr.shape[0], features=Z_pr.shape[1]))
+
+    def pipeline(self):
+        Z = self.df[["horsepower", "curb-weight", "engine-size", "highway-mpg"]]
+        y = self.df["price"]
+
+        Input = [
+            ('scale', StandardScaler()),
+            ('polynomial', PolynomialFeatures(include_bias=False)),
+            ('model', LinearRegression())
+        ]
+
+        pipe = Pipeline(Input)
+
+        print(pipe.fit(Z, y))
+        ypipe = pipe.predict(Z)
+        print(ypipe[0:4])
+
 
 if __name__ == "__main__":
     model = ModelDevelopment()
     # model.residiual_plot()
     # model.single_linear_regression()
     # model.multiple_linear_regression()
-
-    model.polynomial_regression()
+    # model.polynomial_regression()
+    # model.polynomial_features()
+    model.pipeline()
