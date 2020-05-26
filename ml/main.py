@@ -1,23 +1,17 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import pylab as pl
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from commons.utils import Download
 
 
 class SimpleLinearRegression:
 
-    def __init__(self, is_download: bool = False):
+    def __init__(self, is_download: bool = False, filename: str = 'FuelConsumption.csv'):
+        self.url = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs/FuelConsumptionCo2.csv'
         if is_download:
-            self.download()
-        self.df = pd.read_csv('FuelConsumption.csv')
-
-    @staticmethod
-    def download(path: str = None) -> bool:
-        if not path:
-            path = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs/FuelConsumptionCo2.csv'
-        data = pd.read_csv(path)
-        data.to_csv('FuelConsumption.csv')
-        return True
+            Download(url=self.url, filename=filename)
+        self.df = pd.read_csv('download/FuelConsumption.csv')
 
     def data_exploration(self) -> None:
         print('[+] Show data head')
@@ -39,9 +33,27 @@ class SimpleLinearRegression:
         plt.show()
         plt.close()
 
+    def simple_regression_model(self):
+        """Creating train and test dataset"""
 
-if __name__ == '__main__':
-    model = SimpleLinearRegression(is_download=True)
-    # model.data_exploration()
-    model.plot_features()
-    model.plot_linear(dependent='CO2EMISSIONS', independent='ENGINESIZE')
+        cdf = self.df[["ENGINESIZE", "CYLINDERS", "FUELCONSUMPTION_COMB", "CO2EMISSIONS"]]
+        msk = np.random.rand(len(self.df)) < 0.8
+        train = cdf[msk]
+        test = cdf[~msk]
+
+        # Training Model with Linear Regression
+        regr = LinearRegression()
+        train_x = np.asanyarray(train[['ENGINESIZE']])
+        train_y = np.asanyarray(train[['CO2EMISSIONS']])
+        regr.fit(train_x, train_y)
+
+        # The coefficients
+        print('Coefficient:', regr.coef_)
+        print('Intercept:', regr.intercept_)
+
+        plt.scatter(train.ENGINESIZE, train.CO2EMISSIONS, color='blue')
+        plt.plot(train_x, regr.coef_[0][0] * train_x + regr.intercept_[0], '-r')
+        plt.xlabel('Engine Size')
+        plt.ylabel('Emissions')
+        plt.show()
+        plt.close()

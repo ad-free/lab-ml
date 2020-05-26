@@ -2,3 +2,6 @@
 *ipynb_*
 .idea/
 .vscode/
+download/
+__pycache__/
+*.pyc
