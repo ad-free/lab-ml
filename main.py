@@ -1,4 +1,4 @@
-from ml.main import SimpleLinearRegression
+from ml.simple_linear_regression import SimpleLinearRegression
 
 # from .data_science import DataScience
 
