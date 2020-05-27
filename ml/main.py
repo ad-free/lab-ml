@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 from commons.utils import Download
 
 
@@ -33,8 +34,28 @@ class SimpleLinearRegression:
         plt.show()
         plt.close()
 
-    def simple_regression_model(self):
-        """Creating train and test dataset"""
+    def simple_regression_model(self) -> None:
+        """
+        Step 1:
+        - Creating train and test dataset
+
+        Step 2:
+        - Mean absolute error:
+        It is the mean of the absolute value of the errors.
+        This is the easiest of the metrics to understand since it’s just average error.
+
+        - Mean Squared Error (MSE):
+        Mean Squared Error (MSE) is the mean of the squared error.
+        It’s more popular than Mean absolute error because the focus is geared more towards large errors.
+        This is due to the squared term exponentially increasing larger errors in comparison to smaller ones.
+
+        - Root Mean Squared Error (RMSE).
+
+        - R-squared is not error, but is a popular metric for accuracy of your model.
+        It represents how close the data are to the fitted regression line.
+        The higher the R-squared, the better the model fits your data.
+        Best possible score is 1.0 and it can be negative (because the model can be arbitrarily worse).
+        """
 
         cdf = self.df[["ENGINESIZE", "CYLINDERS", "FUELCONSUMPTION_COMB", "CO2EMISSIONS"]]
         msk = np.random.rand(len(self.df)) < 0.8
@@ -57,3 +78,12 @@ class SimpleLinearRegression:
         plt.ylabel('Emissions')
         plt.show()
         plt.close()
+
+        # Step 2: Evaluation
+        test_x = np.asanyarray(test[['ENGINESIZE']])
+        test_y = np.asanyarray(test[['CO2EMISSIONS']])
+        test_y_ = regr.predict(test_x)
+
+        print("Mean absolute error: %.2f" % np.mean(np.absolute(test_y_ - test_y)))
+        print("Residual sum of squares (MSE): %.2f" % np.mean((test_y_ - test_y) ** 2))
+        print("R2-score: %.2f" % r2_score(test_y_, test_y))
