@@ -13,4 +13,4 @@ class Download:
             filename = 'default.csv'
         data = pd.read_csv(path)
         data.to_csv('download/' + filename)
-        return True
+        return data
