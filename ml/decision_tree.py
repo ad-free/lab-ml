@@ -21,7 +21,7 @@ class DecisionTree:
             )
         self.df = pd.read_csv('download/' + filename, delimiter=',')
 
-    def decision_tree(self):
+    def decision_tree(self):~
         data = self.processing_data()
         predict_data = self.df['Drug']
         x_train, x_test, y_train, y_test = train_test_split(data, predict_data, test_size=0.3, random_state=3)

@@ -2,7 +2,14 @@
 *ipynb_*
 .idea/
 .vscode/
+.venv
+venv/
+
 download/
+
 __pycache__/
 *.pyc
 *.png
+
+
+sftp-config.json
