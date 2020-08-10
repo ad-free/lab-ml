@@ -4,13 +4,13 @@
 .vscode/
 .venv
 venv/
-
-download/
+tmp/
 
 __pycache__/
 *.pyc
 *.png
 *.pdf
 
-
 sftp-config.json
+
+download/

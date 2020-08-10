@@ -31,8 +31,9 @@ class DecisionTree:
                                         feature_names=feature_names, out_file=None,
                                         class_names=np.unique(y_train), filled=True, special_characters=True,
                                         rotate=False)
-        graph = graphviz.Source(dot_data)
-        graph.render('iris')
+        graph = graphviz.Source(dot_data, directory='tmp')
+        graph.format = 'png'
+        graph.render('decision_tree', view=True)
 
     def processing_data(self):
         """Remove the column containing the target name since it doesn't contain numeric values
