@@ -9,7 +9,8 @@ from commons.utils import Download
 class SimpleLinearRegression:
 
     def __init__(self, is_download: bool = False, filename: str = 'FuelConsumption.csv'):
-        self.url = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs/FuelConsumptionCo2.csv'
+        self.url = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs' \
+                   '/FuelConsumptionCo2.csv '
         if is_download:
             Download(url=self.url, filename=filename)
         self.df = pd.read_csv('download/FuelConsumption.csv')
