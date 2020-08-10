@@ -10,6 +10,7 @@ download/
 __pycache__/
 *.pyc
 *.png
+*.pdf
 
 
 sftp-config.json
