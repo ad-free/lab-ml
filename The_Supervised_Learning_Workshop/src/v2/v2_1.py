@@ -6,7 +6,7 @@ from missingno import heatmap, matrix
 
 class StatisticsAndMissingValues(object):
     def __init__(self, *args, **kwargs):
-        self.data = pd.read_csv(r"../datasets/v2/house_prices.csv")
+        self.data = pd.read_csv(r"../../datasets/v2/house_prices.csv")
 
         # * Delete the columns having more than 80% of values missing.
         self.data = self.missing_values(self.data)
