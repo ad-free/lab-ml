@@ -53,7 +53,7 @@ Pillow @ file:///C:/ci/pillow_1594298230227/work
 prometheus-client==0.8.0
 prompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1598623940270/work
 pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
-Pygments==2.6.1
+Pygments==2.7.4
 pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1594392929924/work
 pyparsing==2.4.7
 pyrsistent==0.16.0
